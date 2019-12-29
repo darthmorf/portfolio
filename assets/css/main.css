@@ -3036,7 +3036,7 @@
 
 	.wrapper > header {
 		text-align: center;
-		background: #FFF;
+		background: #F3F3F3;
 		padding: 2rem;
 		margin: 0;
 	}
@@ -3068,6 +3068,7 @@
 
 		.wrapper > header.special {
 			padding: 4rem 2rem;
+			padding-bottom: 0px;
 		}
 
 			@media screen and (max-width: 980px) {
@@ -3096,6 +3097,8 @@
 
 	.wrapper.style1 .content {
 		padding: 6rem;
+	    padding-top: 3rem;
+    	padding-bottom: 4rem;
 	}
 
 		@media screen and (max-width: 1280px) {
@@ -3117,6 +3120,7 @@
 	.wrapper.style2 {
 		background: #1e1f23;
 		padding: 6rem;
+		padding-bottom: 2rem;
 	}
 
 		.wrapper.style2 header {
