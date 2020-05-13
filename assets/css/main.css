@@ -25,6 +25,7 @@ body {
 
 .header a:hover {
     color: grey;
+    cursor: pointer;
 }
 
 .footer  {
@@ -78,7 +79,7 @@ body {
     background-color: white;
     width: 79%;
     margin: 0 auto;    
-    margin-bottom: 20px;
+    margin-bottom: 2vh;
     overflow: hidden;
 }
 
@@ -87,6 +88,7 @@ body {
     margin-top: 6px;
     padding-left: 5%;
     padding-right: 5%;
+    padding-bottom: 2%;
     font-size: 20px;
     float: center;
 }
@@ -139,8 +141,8 @@ body {
     margin-bottom: 20px;
     margin-left: 1vh;
     margin-right: 1vh;
-    flex-basis: 40%;
     flex-grow: 1;
+    position: relative;
 }
 
 .preview a {
@@ -166,7 +168,30 @@ body {
     color:#1e1f23;
     text-align: center;
     width: 100%;
+    margin-bottom: 1vh;
 }
+
+.previewlink {
+    font-size: 1.4vh;
+    bottom: 1vh;
+    font-family: "Montserrat-SemiBold";
+}
+
+.previewlink a:link{
+    text-decoration: none;
+    font-family: "Montserrat-Regular" !important;
+}
+
+.previewlink a:visited{
+    text-decoration: none;
+    font-family: "Montserrat-Regular" !important;
+}
+
+.previewlink a:hover {
+    color: grey;
+    font-family: "Montserrat-Regular" !important;
+}
+
 
 .profile {
     border-radius: 50%;
@@ -192,6 +217,11 @@ body {
 @font-face {
     font-family: "Montserrat-Bold";
     src: url("../fonts/Montserrat/Montserrat-Bold.ttf");
+}
+
+@font-face {
+    font-family: "Montserrat-SemiBold";
+    src: url("../fonts/Montserrat/Montserrat-SemiBold.ttf");
 }
 
 @font-face {
