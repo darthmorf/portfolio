@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+    <head>
+        <meta charset="utf-8">
+        <title>Sam Poirier - OpenGL Project</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="./assets/css/main.css">
+        <link rel="stylesheet" href="./assets/font-awesome-4.7.0/css/font-awesome.min.css">
+    </head>
+    <body>
+        <div class="header">
+            <a href="index.html" target="_parent">Home</a>
+        </div>
+        <br>
+
+        <div class="content">
+            <div class="titleContainter">
+                <div class="title">
+                    <h1>OpenGL Project</h1>
+                </div>
+            </div>
+            <div class="contentText">
+
+                For my final year Computer Graphics university module, we had to build a 3D scene rendered in real-time using OpenGL and GLFW. It was up to us to implement pretty much everything, from matrix transformations, creation of primitives, mesh management, lighting & shaders and more. We were provided an overall framework by the module leader <a href="https://www.linkedin.com/in/markus-billeter-92b89a107/?originalSubdomain=uk" target="_blank">Markus Billeter</a> but that was mostly about providing a consistent application structure to ease marking. Thanks very much to him for a great module, and the base used in this project! We have been asked to keep GitHub repositories private as they could be easily found by future students taking the module, but you can download a zip of the project source <a href="./assets/images/opengl-project/sam-poirier-opengl-project-source.zip" target="_blank">here</a>. <br><br>
+                
+                <iframe class="showcase" width="560" height="315" src="https://www.youtube.com/embed/ztVwmVhiQbU" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+
+                <h1>Building & Running</h1>
+                To build on linux, navigate to the root directory and run <p class="code">./premake5 gmake2</p> then <p class="code">make -j6</p> (or <p class="code">make -j6 config=release_x64</p> for a release build). It can then be run with <p class="code">./bin/main-debug-x64-gcc.exe</p> (yes there is an exe extension on Linux - this was intentional by Markus).<br><br>
+
+                To build on Windows, run <p class="code">.\premake5.exe vs2022</p>. This will generate Visual Studio solution and project files - you can then open the solution file and run and build from Visual Studio.
+                
+                <h1>Features</h1>
+
+                <h3>Initial Setup</h3>
+                The first task was to implement the basic matrix and vector libraries that would be used throughout the rest of the program. I implemented libraries to support 2x2, 3x3 and 4x4 matrices, and functions to multiply, invert, transpose, rotate, translate, scale and apply a perspective projection. I also implemented 2, 3 and 4 dimensional vectors. I also implemented a number of useful features to modify the provided SimpleMesh datastructure, and functions to construct meshes in the shapes of squares, cubes, cylinders and cones.
+
+                <h3>First Person Camera</h3>
+                In order to implement a first person 3D camera, I implemented a callback event to listen for keys being pressed and mouse movement. The mouse event logic calculates the current pitch and yaw, and stores it in a struct containing the application state. Then, in the keyboard events method I calculate the sine and cosine of the yaw, and the sine of the pitch. I then add or subtract one of these three values (multiplied by a 'speed' variable) to each component of a ∆ position vector, depending on which key is pressed and hence, which direction we want to move in. The ∆ position vector tracks the change in camera position since the last main loop iteration. The aforementioned 'speed' value is modified to be greater if shift is pressed, or smaller if ctrl is pressed to allow the user to adjust the speed of the camera movement. (The controls are typical WASD, with Q & E used to move vertically up and down).
+
+                Next, in the main update loop I multiply the ∆ position vector by ∆ time and add it to the current camera position vector. This means that the camera controls are frame-rate independent as the movement magnitude takes into account the frame time. The final step is to then reset the ∆ position vector to 0. I also set GLFW so that the cursor is hidden when the space bar is pressed to ensure that it doesn't confuse the user as they look around the scene. This camera position is then used to calculate the perspective projection, which also takes into account a FoV value and the aspect ratio of the window.
+
+                <h3>Simple Diffuse & Ambient Lighting</h3>
+                I started by implemented a simple lighting model for diffuse and ambient shading in our fragment shader, with a single point light. I chose a relatively bright, even white value for the diffuse lighting, and a much darker (but still even white) ambient light. The point light was a normalised version of the vector. You can see the clear results of this lighting below.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band01-01.png" class="inline showcase" style="width: 40%">
+                    <img src="./assets/images/opengl-project/band01-02.png" class="inline showcase" style="width: 40%">
+                </div>
+
+                <h3>Blinn-Phong Lighting Model</h3>
+                The next step was to improve lighting model; I decided to implement the Blinn-Phong lighting model. I included the ability for each mesh to have it's own properties for it's diffuse, specular and emissive values. These values are then passed into the shaders and used to calculate the scene lighting according to the corrected Blinn-Phong model. My implementation at this stage was pretty standard, and did not really deviate from the classic implementation. You can see the lighting improvements to the scene below. The difference between Specular and Diffuse lighting is clear - as the camera pans you can see the light reflection changing in the largely specular desk front and tops, while the largely diffuse seats and walls between the rows have their lighting stay largely consistent. It is also possible to see in the corner the difference in an emissive object; the laptop screen, and the diffuse material around it (prior to this, it was not lit at all; now it is lit, but uses a highly emissive material property). A yellow cube represents the light position.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band02-01.png" class="inline showcase" style="width: 40%">
+                    <img src="./assets/images/opengl-project/band02-02.png" class="inline showcase" style="width: 40%">
+                    <img src="./assets/images/opengl-project/band02-03.png" class="inline showcase" style="width: 40%">
+                    <img src="./assets/images/opengl-project/band02-05.png" class="inline showcase" style="width: 40%">
+                </div>
+
+                <h3>Texture Mapping</h3>
+                Next I implemented the ability for a texture to be loaded from disk, and applied to a mesh instead of a simple base colour using simple texture coordinates. I set the provided texture to appear on the face of an animated object behind the desk. You can see a picture below (in the screenshot, the face is blurred as we were asked to avoid sharing the picture where possible by Markus). The square with the texture has been set to be an emissive surface to emulate the look of a screen/display.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band03-01.png" class="inline showcase" style="width: 40%">
+                </div>
+
+                <h3>Multiple Light Sources</h3>
+                In order to implement multiple light sources, I adapted the shader to contain a struct which represents each light's position, colour and strength. I then modified the uniform values to contain an array of these structs instead of the properties of one. The shader then sums the contribution of all the lights in the array, and outputs the combined value. To use these modifications, we pass in each light one by one, starting at the initial uniform index value for the array, incrementing the index as we pass in each light item. You can see the combination of three lights below - the two new ones being a green light in the back-right corner, and a small red light that moves with the animated object. You can see the combined reflections of the main white light and the green one on the tops of the desks.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band03-02.png" class="inline showcase" style="width: 40%">
+                </div>
+
+                <h3>External OBJ File</h3>
+                I downloaded a model of a chair from <a href="https://www.turbosquid.com/3d-models/free-max-model-ea-108-aluminium-chair/620426" target="_blank">turbosquid.com</a> and used Blender to generate a materials file. In order to add it to the scene, I used the <a href="https://github.com/guybrush77/rapidobj" target="_blank">rapidobj</a> library to load normals and texture coordinates, and pass in values for the Specular, Diffuse and Emissive properties (the model I had did not include these, so I could not load them from the file). You can see an example of the object below. In hindsight, this was a bad choice of object; the model has a very high number of meshes so kills the frame rate when it's loaded. There is also an issue with it hitting the disk more than once, so by default the obj file is disabled, but you can enabled it in the debug menu.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band03-03.png" class="inline showcase" style="width: 40%">
+                </div>
+
+                <h3>Transparent Object</h3>
+                In order to support transparency, I modified our colour vector to use a 4 dimensional vector instead of 3. I then updated our fragment shader to also output a vec4, with the fourth channel used to represent transparency. We also told OpenGL to use transparency by calling <p class="code">glEnable(GL_BLEND);</p> and <p class="code">glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);</p>.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band03-04.png" class="inline showcase" style="width: 40%">
+                </div>
+
+                <h3>Native Screenshots</h3>
+                In order to take screenshots, I made use of the  <p class="code">glReadPixels()</p> and <p class="code">stbi_write_png()</p> functions. We use the first to read the current buffer into a byte array of and then pass it to the second function. I also needed to call <p class="code">stbi_flip_vertically_on_write(1);</p> - otherwise the screenshot would be upside-down. The screenshots are saved in the root directory of the project in the format <p class="code">screenshot %Y-%m-%d %H-%M-%S.png</p>.
+
+                <h3>Multi-Texturing</h3>
+                For multi-texturing, I added a vec3 that allows a material to specify what texture to use for each component of Diffuse, Specular and Emissive. This is passed into the shader, which then makes use of the appropriate texture. An example of this can be seen below, which shows a single rectangular mesh where one texture is used for the diffuse portion of the surface, and another texture is used for the emissive property. The textures used can also be seen below (with an added outline) - the Microsoft logo texture is from Microsoft.com; the other texture was designed by me using logos sourced from the respective companies' websites.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band04-01.png" class="inline showcase" style="width: 30%; vertical-align: middle;">
+                    <img src="./assets/images/opengl-project/band04-02.png" class="inline showcase" style="width: 30%; vertical-align: middle; border: 1px solid black;">
+                    <img src="./assets/images/opengl-project/band04-03.png" class="inline showcase" style="width: 30%; vertical-align: middle; border: 1px solid black;">
+                </div>
+
+                <h3>Third Party UI</h3>
+                I made use of <a href="https://github.com/ocornut/imgui" target="_blank">ImgUI</a> for creating a debug UI. In order to ensure proper compatibility, I updated the premake files to include the third party source properly when the project is setup. I built functionality to adjust the properties of camera speed, animations, lighting and material settings, along with a number of general settings. To toggle the display of the UI, simply press 'X'. An example of adjusting the colour and position of the main light can be seen below. 
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band04-04.png" class="inline showcase" style="width: 40%">
+                    <img src="./assets/images/opengl-project/band04-05.png" class="inline showcase" style="width: 40%">
+                </div>
+
+                <h3>Alpha Masking</h3>
+                In order to support alpha masking for a material, I updated the fragment shader to use vec4s for our texture outputs, and ensured that the alpha values were kept throughout the fragment shader calculations. You can see this implemented below (compare it to the Texture Mapping section to see the difference).
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band04-06.png" class="inline showcase" style="width: 40%">
+                </div>
+
+                <h3>Screen Space Textures</h3>
+                Next I decided to implement a screen-space texture that still makes use of scene lighting. To do this, I draw a texture on a square as normal, and transform it by the current world to camera matrix. The texture used was made by me from a photograph of my hands. You can see an example of the texture with lighting applied as the camera moves in relation to the light below.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band04-07.png" class="inline showcase" style="width: 30%">
+                    <img src="./assets/images/opengl-project/band04-08.png" class="inline showcase" style="width: 30%">
+                    <img src="./assets/images/opengl-project/band04-09.png" class="inline showcase" style="width: 30%">
+                </div>
+
+                <h3>Billboarding</h3>
+                The last feature I implemented was pitch-yaw billboarding. I construct a 4x4 matrix which consists of the camera's pitch and yaw rotation, and apply it to the billboarded objects. I found that having the billboard work according to pitch gave an undesired effect, so disabled it by default (you can still enable it in the debug menu). An example of billboarding is visible below - the first image has pitch billboarding enabled, the other two has it disabled. The texture used was made by me and is a photo of me holding a steel sword from Terraria.
+                <br><br>
+                <div style="text-align: center;">
+                    <img src="./assets/images/opengl-project/band04-10.png" class="inline showcase" style="width: 30%">
+                    <img src="./assets/images/opengl-project/band04-11.png" class="inline showcase" style="width: 30%">
+                    <img src="./assets/images/opengl-project/band04-12.png" class="inline showcase" style="width: 30%">
+                </div>
+
+                <br><br><br><br>
+            </div>
+        </div>
+
+        <div class="footer">
+            <br><br>           
+            <a target="_blank" href=" https://discordapp.com/users/145522418406916096" title="Discord"><i class="footericon fa fa-discord"></i></a>
+            <a target="_blank" href="https://twitter.com/darthmorf" title="Twitter"><i class="footericon fa fa-twitter"></i></a>
+            <a target="_blank" href="mailto:sampoirier@darthmorf.co.uk"><i class="footericon fa fa-envelope"></i></a>
+            <a target="_blank" href="https://github.com/darthmorf"><i class="footericon fa fa-github"></i></a>
+            <a target="_blank" href="https://www.linkedin.com/in/sam-poirier-2610/"><i class="footericon fa fa-linkedin"></i></a> 
+            <a target="_blank" href="https://www.paypal.me/sampoirier26"><i class="footericon fa fa-paypal"></i></a>
+            <br><br>
+            © Sam Poirier. All rights reserved. 
+        </div>
+    </body>
+</html>
