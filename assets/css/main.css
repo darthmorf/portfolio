@@ -241,6 +241,12 @@ body {
     margin: auto;
 }
 
+.code {
+    display: inline;
+    font-family: "Roboto-Mono";
+    background-color: lightgray;
+}
+
 @font-face {
     font-family: "Montserrat-Regular";
     src: url("../fonts/Montserrat/Montserrat-Regular.ttf");
@@ -259,4 +265,9 @@ body {
 @font-face {
     font-family: "Montserrat-Light";
     src: url("../fonts/Montserrat/Montserrat-Light.ttf");
+}
+
+@font-face {
+    font-family: "Roboto-Mono";
+    src: url("../fonts/Roboto\ Mono/RobotoMono-Regular.ttf");
 }
