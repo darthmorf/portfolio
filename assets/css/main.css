@@ -32,7 +32,7 @@ body {
     width: 69%;
     color: white;
     font-family: "Montserrat-Light";
-    font-size: 1.5vh;
+    font-size: 1.5vmin;
     margin: 0 auto;    
     text-align: center;
 }
@@ -52,8 +52,8 @@ body {
 }
 
 .footericon {    
-    font-size: 5vh;
-    letter-spacing: 2vh;
+    font-size: 2.5vmin !important;
+    letter-spacing: 2vmin;
 }
 
 .titleContainter {
